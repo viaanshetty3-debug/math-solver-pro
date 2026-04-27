@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MathSolver Pro - Free Math Problem Solver</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$']],
+                displayMath: [['$$', '$$']],
+                processEscapes: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="app-container header-content">
+            <div>
+                <h1>MathSolver <span>Pro</span></h1>
+                <p>Solve any math problem with detailed step-by-step explanations</p>
+            </div>
+            <div class="badge">100% Free</div>
+        </div>
+    </header>
+
+    <div class="app-container">
+        <!-- Tabs -->
+        <div class="tabs">
+            <div class="tab active" data-tab="tab-solve">
+                <span class="tab-icon">✏️</span> Quick Solve
+            </div>
+            <div class="tab" data-tab="tab-specialized">
+                <span class="tab-icon">🔬</span> Specialized
+            </div>
+            <div class="tab" data-tab="tab-graph">
+                <span class="tab-icon">📈</span> Graph
+            </div>
+            <div class="tab" data-tab="tab-pdf">
+                <span class="tab-icon">📄</span> PDF Upload
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Tab 1: Quick Solve -->
+            <div id="tab-solve" class="tab-panel active">
+                <div class="form-group">
+                    <label>Enter your math problem</label>
+                    <textarea id="question-input" class="math-input"
+                        placeholder="Type any math problem...&#10;Examples: x^2 + 3x - 4 = 0, derivative of sin(x)*x^2, integrate x^3 from 0 to 5"></textarea>
+                    <div class="input-hint">Supports equations, calculus, algebra, trigonometry, and more. Press Ctrl+Enter to solve.</div>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="solveProblem()">
+                        <span class="btn-icon">🧮</span> Solve Problem
+                    </button>
+                </div>
+
+                <div class="quick-examples">
+                    <h4>Try these examples</h4>
+                    <div class="example-chips">
+                        <span class="chip" onclick="setExample('x^2 - 5x + 6 = 0')">x² - 5x + 6 = 0</span>
+                        <span class="chip" onclick="setExample('derivative of x^3 * sin(x)')">d/dx x³·sin(x)</span>
+                        <span class="chip" onclick="setExample('integrate x^2 from 0 to 3')">∫x² dx [0,3]</span>
+                        <span class="chip" onclick="setExample('limit of sin(x)/x as x approaches 0')">lim sin(x)/x</span>
+                        <span class="chip" onclick="setExample('2x + 3y = 7')">2x + 3y = 7</span>
+                        <span class="chip" onclick="setExample('sqrt(144) + 3^4')">√144 + 3⁴</span>
+                    </div>
+                </div>
+
+                <div id="single-results" class="results-container"></div>
+            </div>
+
+            <!-- Tab 2: Specialized Solvers -->
+            <div id="tab-specialized" class="tab-panel">
+                <div class="option-grid">
+                    <div class="option-card selected" onclick="selectSolver('equation')">
+                        <div class="option-icon">📐</div>
+                        <div class="option-label">Equations</div>
+                    </div>
+                    <div class="option-card" onclick="selectSolver('derivative')">
+                        <div class="option-icon">📉</div>
+                        <div class="option-label">Derivatives</div>
+                    </div>
+                    <div class="option-card" onclick="selectSolver('integral')">
+                        <div class="option-icon">📊</div>
+                        <div class="option-label">Integrals</div>
+                    </div>
+                    <div class="option-card" onclick="selectSolver('limit')">
+                        <div class="option-icon">🎯</div>
+                        <div class="option-label">Limits</div>
+                    </div>
+                    <div class="option-card" onclick="selectSolver('system')">
+                        <div class="option-icon">🔗</div>
+                        <div class="option-label">Systems</div>
+                    </div>
+                    <div class="option-card" onclick="selectSolver('matrix')">
+                        <div class="option-icon">🔢</div>
+                        <div class="option-label">Matrices</div>
+                    </div>
+                </div>
+
+                <!-- Equation fields -->
+                <div id="fields-equation" class="solver-fields">
+                    <div class="form-group">
+                        <label>Equation</label>
+                        <input type="text" id="spec-equation" class="math-input" placeholder="e.g., x^2 - 4x + 3 = 0">
+                    </div>
+                </div>
+
+                <!-- Derivative fields -->
+                <div id="fields-derivative" class="solver-fields" style="display:none">
+                    <div class="form-group">
+                        <label>Expression</label>
+                        <input type="text" id="spec-derivative-expr" class="math-input" placeholder="e.g., x^3 * sin(x)">
+                    </div>
+                    <div class="options-row">
+                        <div class="form-group">
+                            <label>Variable</label>
+                            <input type="text" id="spec-derivative-var" value="x" placeholder="x">
+                        </div>
+                        <div class="form-group">
+                            <label>Order</label>
+                            <input type="number" id="spec-derivative-order" value="1" min="1" max="10">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Integral fields -->
+                <div id="fields-integral" class="solver-fields" style="display:none">
+                    <div class="form-group">
+                        <label>Expression</label>
+                        <input type="text" id="spec-integral-expr" class="math-input" placeholder="e.g., x^2 + 2x">
+                    </div>
+                    <div class="options-row">
+                        <div class="form-group">
+                            <label>Variable</label>
+                            <input type="text" id="spec-integral-var" value="x" placeholder="x">
+                        </div>
+                        <div class="form-group">
+                            <label>Lower Bound (optional)</label>
+                            <input type="text" id="spec-integral-lower" placeholder="e.g., 0">
+                        </div>
+                        <div class="form-group">
+                            <label>Upper Bound (optional)</label>
+                            <input type="text" id="spec-integral-upper" placeholder="e.g., 5">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Limit fields -->
+                <div id="fields-limit" class="solver-fields" style="display:none">
+                    <div class="form-group">
+                        <label>Expression</label>
+                        <input type="text" id="spec-limit-expr" class="math-input" placeholder="e.g., sin(x)/x">
+                    </div>
+                    <div class="options-row">
+                        <div class="form-group">
+                            <label>Variable</label>
+                            <input type="text" id="spec-limit-var" value="x" placeholder="x">
+                        </div>
+                        <div class="form-group">
+                            <label>Approaches</label>
+                            <input type="text" id="spec-limit-point" value="0" placeholder="e.g., 0, oo, pi">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System fields -->
+                <div id="fields-system" class="solver-fields" style="display:none">
+                    <div class="form-group">
+                        <label>Equations (one per line)</label>
+                        <textarea id="spec-system-eqs" class="math-input" placeholder="2x + 3y = 7&#10;x - y = 1"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Variables (comma-separated, optional)</label>
+                        <input type="text" id="spec-system-vars" placeholder="x, y">
+                    </div>
+                </div>
+
+                <!-- Matrix fields -->
+                <div id="fields-matrix" class="solver-fields" style="display:none">
+                    <div class="form-group">
+                        <label>Matrix (rows separated by semicolons, values by commas)</label>
+                        <textarea id="spec-matrix-data" class="math-input" placeholder="1, 2, 3; 4, 5, 6; 7, 8, 9"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Operation</label>
+                        <select id="spec-matrix-op">
+                            <option value="determinant">Determinant</option>
+                            <option value="inverse">Inverse</option>
+                            <option value="eigenvalues">Eigenvalues</option>
+                            <option value="rref">Row Echelon Form</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="btn-group" style="margin-top: 16px;">
+                    <button class="btn btn-primary" onclick="solveSpecialized()">
+                        <span class="btn-icon">🧮</span> Solve
+                    </button>
+                </div>
+
+                <div id="specialized-results" class="results-container"></div>
+            </div>
+
+            <!-- Tab 3: Graph -->
+            <div id="tab-graph" class="tab-panel">
+                <div class="form-group">
+                    <label>Expression to plot</label>
+                    <input type="text" id="plot-expression" class="math-input" placeholder="e.g., sin(x), x^2 - 4, log(x)">
+                </div>
+
+                <button class="advanced-toggle" data-target="graph-advanced">
+                    ⚙️ Advanced Options ▾
+                </button>
+                <div id="graph-advanced" class="advanced-options">
+                    <div class="options-row">
+                        <div class="form-group">
+                            <label>X Min</label>
+                            <input type="number" id="plot-xmin" value="-10">
+                        </div>
+                        <div class="form-group">
+                            <label>X Max</label>
+                            <input type="number" id="plot-xmax" value="10">
+                        </div>
+                        <div class="form-group">
+                            <label>Title (optional)</label>
+                            <input type="text" id="plot-title" placeholder="Graph title">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="plotGraph()">
+                        <span class="btn-icon">📈</span> Generate Graph
+                    </button>
+                </div>
+
+                <div class="quick-examples">
+                    <h4>Quick plots</h4>
+                    <div class="example-chips">
+                        <span class="chip" onclick="document.getElementById('plot-expression').value='sin(x)';plotGraph()">sin(x)</span>
+                        <span class="chip" onclick="document.getElementById('plot-expression').value='x^2';plotGraph()">x²</span>
+                        <span class="chip" onclick="document.getElementById('plot-expression').value='cos(x)*exp(-x/5)';plotGraph()">cos(x)·e^(-x/5)</span>
+                        <span class="chip" onclick="document.getElementById('plot-expression').value='tan(x)';plotGraph()">tan(x)</span>
+                        <span class="chip" onclick="document.getElementById('plot-expression').value='log(x)';plotGraph()">log(x)</span>
+                        <span class="chip" onclick="document.getElementById('plot-expression').value='x^3 - 3*x';plotGraph()">x³ - 3x</span>
+                    </div>
+                </div>
+
+                <div id="graph-results" class="results-container"></div>
+            </div>
+
+            <!-- Tab 4: PDF Upload -->
+            <div id="tab-pdf" class="tab-panel">
+                <div id="upload-zone" class="upload-zone">
+                    <div class="upload-icon">📁</div>
+                    <h3>Drop your PDF here or click to browse</h3>
+                    <p>Upload a math paper or exam to get solutions for all questions</p>
+                    <p style="margin-top: 8px; font-size: 12px;">Maximum file size: 50MB</p>
+                </div>
+                <input type="file" id="pdf-input" class="file-input" accept=".pdf">
+
+                <div id="file-preview" class="upload-preview">
+                    <span>📄</span>
+                    <span id="file-name" class="file-name"></span>
+                    <span id="file-size" class="file-size"></span>
+                    <button class="remove-file" onclick="removeFile()">✕</button>
+                </div>
+
+                <div class="btn-group" style="margin-top: 20px;">
+                    <button class="btn btn-primary" onclick="solvePDF()">
+                        <span class="btn-icon">🚀</span> Solve All Questions
+                    </button>
+                </div>
+
+                <div id="pdf-results" class="results-container"></div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            MathSolver Pro — Free math problem solver with step-by-step solutions
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="loading-card">
+            <div class="spinner"></div>
+            <div class="loading-text">Processing...</div>
+            <div class="loading-subtext">This may take a moment for complex problems</div>
+        </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
